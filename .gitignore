@@ -1,0 +1,4 @@
+/.local_cache
+/.vagrant
+/setup/vagrant/setenv.sh
+/jekyll
