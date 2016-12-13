@@ -1,5 +1,5 @@
-jekyll & kickster 実行環境
-=========================
+GitHub Pages 用 jekyll & kickster 実行環境
+=========================================
 
 GitHub Pages 用に、 [jekyll](http://jekyllrb.com/) の実行環境を、[kickster](http://kickster.nielsenramon.com/) のテンプレートでセットアップします。  
 テンプレートには、CircleCI用の設定ファイルもあるので、作成されたサイトのデータを
@@ -14,10 +14,10 @@ windows で vagrant を使う場合は、 次のとおり、vagrant-winnfsd を
 vagrant plugin install vagrant-winnfsd
 ```
 コンテナは、 jekyll を  ~/jekyll  ディレクトリの中で実行します。  
-jekyll で変換するソースコードが既にある場合は、 ~/jekyll  に配置してください。  
-尚、初回起動時に、 ~/jekyll  に何もソースコードがない場合、
+jekyll で変換するリソースが既にある場合は、 ~/jekyll  に配置してください。  
+尚、初回起動時に、 ~/jekyll  に何もリリソースがない場合、
 [kickster](http://kickster.nielsenramon.com/) で作成された
-テンプレートをコピーするので、とりあえず、動かしみるなら、何も配置しないで、
+テンプレートをコピーするので、とりあえず、動かしてみるなら、何も配置しないで、
 そのまま起動してみてください。
 
 ## jekyll serve
@@ -40,7 +40,18 @@ docker exec -it kickster jekyll build
 ## 用途
 このリポジトリは、あくまで、kickster と jekyll が実行できる環境です。  
 初回起動して、 ~/jekyll  の中に、テンプレートが作成されたら、対象サイトのための
-ソースコードは、 ~/jekyll の中で、 ```git init``` して、別のリポジトリで、
+リソースは、 ~/jekyll の中で、 ```git init``` して、別のリポジトリで、
 管理してください。  
 CircleCIも、そのリポジトリで、連携してください。
 
+## TIPS
+
+### image のパスを assets 配下に置換する
+例えば、 ```_layouts/default.html``` の中の ```/common/img/xxxx.png``` を ```{% asset_path xxxx.png %}``` に置換するには、
+```
+sed -i -e 's|"/common/img/\([^"]*\)"|"\{% asset_path \1 %\}"|' _layouts/default.html 
+```
+### bower で js をインストール
+bowerのリポジトリになくても、URLを直接指定すると入る
+bower install https://ajax.aspnetcdn.com/ajax/jquery.validate/1.15.1/jquery.validate.js --save
+bower install https://cdnjs.cloudflare.com/ajax/libs/history.js/1.8/compressed/history.adapter.jquery.min.js --save
