@@ -21,7 +21,4 @@ docker_pull_cache jekyll/jekyll:pages
 cd /vagrant
 docker_compose_build_cache \
   altus5/kickster:latest \
-  altus5/jekyll_node_module:latest
-
-docker-compose up -d
-
+  altus5/jekyll_data:latest

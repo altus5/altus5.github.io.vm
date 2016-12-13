@@ -9,8 +9,12 @@
 basedir=$(cd $(dirname $0) && pwd)
 
 if [ ! -e /srv/jekyll/bin/automated ]; then
-  cp -pr /srv/my_awesome_site/* /srv/jekyll/
+  cp -apr /srv/my_awesome_site/. /srv/jekyll/
 fi
 
 cd /srv/jekyll
+
+# データコンテナのマウントポイントは、毎回権限を再設定する
+chown -R jekyll:jekyll .asset-cache node_modules
+
 bundle exec jekyll serve --watch --incremental --force_polling
