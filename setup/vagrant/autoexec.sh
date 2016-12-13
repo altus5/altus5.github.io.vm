@@ -8,6 +8,9 @@ if [ -e $basedir/setenv.sh ]; then
   source $basedir/setenv.sh
 fi
 
+# CoreOSの自動アップデートによるrebootを抑止する
+systemctl stop update-engine
+
 cd /vagrant
 
 # dockerコンテナ起動

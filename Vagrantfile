@@ -38,10 +38,6 @@ Vagrant.configure(VAGRANTFILE_API_VERSION) do |config|
     #vb.customize ["modifyvm", :id, "--natdnsproxy1", "on"]
   end
 
-  # CoreOSの自動アップデートによるrebootを抑止する
-  config.vm.provision :shell, :inline => <<-EOT
-	  systemctl stop update-engine
-  EOT
   # kicksterの実行環境
   config.vm.provision "shell", 
     inline: "/vagrant/setup/vagrant/install-kickster.sh"
