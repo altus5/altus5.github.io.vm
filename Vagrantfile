@@ -21,7 +21,7 @@ Vagrant.configure(VAGRANTFILE_API_VERSION) do |config|
     config.vbguest.auto_update = false
   end
 
-  config.vm.hostname = "jekyll-boot.local"
+  config.vm.hostname = "jekyll.boot.local"
   config.vm.network :private_network, ip: "192.168.98.10"
 
   # ssh-agentでホストOSのsshキーを共有
@@ -31,17 +31,17 @@ Vagrant.configure(VAGRANTFILE_API_VERSION) do |config|
   config.vm.synced_folder ".", "/vagrant", id: "core", :nfs => true, :mount_options => ['nolock,vers=3,udp']
 
   config.vm.provider :virtualbox do |vb|
-    vb.name = "jekyll-boot"
+    vb.name = "jekyll_boot"
     vb.customize ["modifyvm", :id, "--memory", 1024]
     # ホストOSでVPNで接続したときのゲストOS側のDNSをホストOSのものを使うようにする
     #vb.customize ["modifyvm", :id, "--natdnshostresolver1", "on"]
     #vb.customize ["modifyvm", :id, "--natdnsproxy1", "on"]
   end
 
-  # jekyll-bootの実行環境
+  # jekyll_bootの実行環境
   config.vm.provision "shell", 
-    inline: "/vagrant/setup/vagrant/install-jekyll-boot.sh"
-  # jekyll-bootコンテナの起動
+    inline: "/vagrant/setup/vagrant/install-jekyll_boot.sh"
+  # jekyll_bootコンテナの起動
   config.vm.provision "shell", 
     run: "always", 
     inline: "/vagrant/setup/vagrant/autoexec.sh"

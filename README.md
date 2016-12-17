@@ -17,21 +17,23 @@ Windows で vagrant を使う場合は、 次のとおり、vagrant-winnfsd を
 ```
 vagrant plugin install vagrant-winnfsd
 ```
-コンテナは、 jekyll を  ~/jekyll  ディレクトリの中で実行します。  
-jekyll で変換するリソースが既にある場合は、 ~/jekyll  に配置してから、
+コンテナは、 jekyll を  $this_dir[^this_dir]/jekyll  ディレクトリの中で実行します。  
+jekyll で変換するリソースが既にある場合は、 $this_dir/jekyll  に配置してから、
 起動してください。  
-これから、新規に作成する場合は、~/jekyll  ディレクトリは作成しないで、
+これから、新規に作成する場合は、$this_dir/jekyll  ディレクトリは作成しないで、
 そのまま、起動してください。  
-コンテナの初回起動時に、 ~/jekyll のディレクトリを作成し、
+コンテナの初回起動時に、 $this_dir/jekyll のディレクトリを作成し、
 [kickster](http://kickster.nielsenramon.com/) のテンプレートを展開します。  
 kickster のテンプレートは、手を加えていない素の状態だと、favicon だけ
  kickster のアイコンで、その他は、内容が空っぽの真っ白な表示です。
 オレンジ色のロケットのfaviconになっていれば、正常起動しています。  
 
+[^this_dir]: Vagrantfileのあるディレクトリ
+
 ## jekyll serve
 コンテナが起動すると、 jekyll serve が実行された状態になります。  
 vagrant で起動した場合は、ブラウザで、 http://192.168.98.10:4000 に
-アクセスすると、 ~/jekyll にあるリソースが、表示されます。   
+アクセスすると、 $this_dir/jekyll にあるリソースが、表示されます。   
 
 jekyll は、```--watch --incremental --force_polling``` オプションで
 起動しているので、リソースを編集すると、自動的に変換されます。  
@@ -62,18 +64,18 @@ docker-compose up
 --watch の反応が悪くて、まどろっこしい場合は、コンテナにアタッチして、
 手動で build もできます。  
 ```
-docker exec -it jekyll-boot jekyll build
+docker exec -it jekyll_boot jekyll build
 ```
 
 ## 用途
 このリポジトリは、あくまで、 jekyll が実行できる環境を作ることが目的です。  
-初回起動して、 ~/jekyll  の中に、テンプレートが作成されたら、対象サイトのための
-リソースは、 ~/jekyll の中で、 ```git init``` して、別のリポジトリで、
+初回起動して、 $this_dir/jekyll  の中に、テンプレートが作成されたら、対象サイトのための
+リソースは、 $this_dir/jekyll の中で、 ```git init``` して、別のリポジトリで、
 管理してください。  
 CircleCI も、そのリポジトリで、連携してください。
 
 ## CircleCI の自動デプロイ
-~/jekyll/ に作成される circle.yml と bin/automated は、 CircleCI の設定と
+$this_dir/jekyll/ に作成される circle.yml と bin/automated は、 CircleCI の設定と
 自動デプロイのためのスクリプトです。  
 このスクリプトは、以下の git のブランチで構成されていることを前提とします。  
 
@@ -87,7 +89,7 @@ draft ブランチで、 jekyll 用のリソース全般を管理し、 jekyll �
 2つのブランチで、それぞれ、異なるファイルを管理します。
 
 ## 最初にやること
-コンテナが起動して、 ~/jekyll が作成されたあとは、まずは、次のことをやってください。  
+コンテナが起動して、 $this_dir/jekyll が作成されたあとは、まずは、次のことをやってください。  
 
 * _config.yml  
 次の行を、正しいサイト名に変更する。  
@@ -112,15 +114,15 @@ USER_EMAIL: <your-github-email>
 ```
 
 * リポジトリにプッシュ  
-github にリポジトリを作成して、 ~/jekyll をプッシュする。  
+github にリポジトリを作成して、 $this_dir/jekyll をプッシュする。  
+draft ブランチは、 --orphan を付けて、 master とは、分離することを明示する。  
 ```
-cd ~/jekyll
+cd jekyll
 git init
 git remote add origin ${ORIGIN_URL}
 # master ブランチをプッシュ
 git commit --allow-empty -m "first commit"
 git push origin master
-rm README.txt
 # draft ブランチをプッシュ
 git checkout --orphan draft
 git add -A

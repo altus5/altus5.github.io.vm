@@ -1,10 +1,10 @@
 version: '2'
 
 services:
-  jekyll-boot:
-    build: setup/containers/jekyll-boot/
-    image: altus5/jekyll-boot:latest
-    container_name: jekyll-boot
+  jekyll_boot:
+    build: setup/containers/jekyll_boot/
+    image: altus5/jekyll_boot:latest
+    container_name: jekyll_boot
     working_dir: /srv/jekyll
     command: /srv/setup/start-jekyll.sh
     ports:
