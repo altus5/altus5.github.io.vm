@@ -2,7 +2,7 @@
 # ===========================================
 #
 # kicksterのtemplateを作成した状態をイメージにすることで、
-# 実行要件を整える手間を省いて、jekyllおよびkicksterでのサイト作成を早める。
+# 実行要件を整える手間を省いて、jekyllでのサイト構築を早期に着手する。
 #
 # jekyll は、 /srv/jekyll のディレクトリで起動される。
 # このディレクトリは、docker run のときに、ホスト側のディレクトリがマウントされる
@@ -24,7 +24,7 @@ RUN \
   apk --update add curl bash \
     build-base ruby-dev libxml2-dev libxslt-dev readline-dev libffi-dev \
     yaml-dev zlib-dev libxml2 zlib
-# pngquantの依存モジュールを追加
+# pngquant のビルドに必要なモジュールを追加
 RUN \
   apk --update add \
     libpng-dev file autoconf automake nasm
@@ -38,21 +38,12 @@ RUN \
   gem install kickster && \
   npm install -g bower
 
-# kickster の snippets などを利用するために、リポジトリをもってきておく
-RUN \
-  mkdir -p /usr/src && \
-  cd /usr/src && \
-  curl -fsSL https://github.com/nielsenramon/kickster/archive/master.zip > kickster-master.zip && \
-  unzip -q kickster-master.zip && \
-  mv /usr/src/kickster-master /usr/src/kickster
-
 # my_awesome_site で node install する
+COPY my_awesome_site /srv/my_awesome_site/
 RUN \
-  mkdir -p /srv/my_awesome_site && \
-  chown -R jekyll:jekyll /srv
-COPY my_awesome_site/* /srv/my_awesome_site/
-RUN \
+  chown -R jekyll:jekyll /srv && \
   cd /srv/my_awesome_site && \
+  chmod +x bin/automated && \
   npm install
 
 # my_awesome_site を kickster でセットアップする
@@ -62,10 +53,8 @@ RUN \
   kickster new my_awesome_site --force && \
   cd my_awesome_site && \
   bin/setup && \
-  # CircleCI用の設定とツールを持ってくる
-  cp -f /usr/src/kickster/snippets/circle/circle.yml . && \
-  cp /usr/src/kickster/snippets/circle/automated bin && \
-  chmod +x bin/automated
+  # CircleCI用の設定を準備したもので置き換え
+  mv circle0.yml circle.yml
 USER root
 RUN \
   cd /srv/my_awesome_site && \
@@ -82,9 +71,7 @@ RUN \
   # gulpを使うので、node_modules も exclude に追加
   sed -i -e 's|^\s*-\s*vendor|&\n  - node_modules|' _config.yml && \
   # gulpの実行を追加
-  sed -i -e 's|jekyll build|&\ngulp|' bin/automated && \
-  sed -i -e 's|jekyll build|&\ngulp|' bin/deploy && \
-  sed -i -e 's|jekyll build|&\n    - gulp|' circle.yml
+  sed -i -e 's|jekyll build|&\ngulp|' bin/deploy
 USER root
 
 WORKDIR /srv/jekyll

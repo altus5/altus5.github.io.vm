@@ -13,6 +13,8 @@ systemctl stop update-engine
 
 cd /vagrant
 
+# 最初に build を実行して、エラーがあるかどうかをターミナルにログ出力させる
+docker-compose run jekyll-boot /srv/setup/init-jekyll.sh
 # dockerコンテナ起動
 docker-compose up -d
 

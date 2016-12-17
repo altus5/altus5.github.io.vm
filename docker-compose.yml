@@ -1,10 +1,10 @@
 version: '2'
 
 services:
-  kickster:
-    build: setup/containers/kickster/
-    image: altus5/kickster:latest
-    container_name: kickster
+  jekyll-boot:
+    build: setup/containers/jekyll-boot/
+    image: altus5/jekyll-boot:latest
+    container_name: jekyll-boot
     working_dir: /srv/jekyll
     command: /srv/setup/start-jekyll.sh
     ports:

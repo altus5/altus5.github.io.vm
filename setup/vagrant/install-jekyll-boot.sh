@@ -1,7 +1,7 @@
 #!/bin/bash
 #
-# kicksterのインストール
-# ======================
+# jekyll-bootのインストール
+# ========================
 #
 
 basedir=$(cd $(dirname $0) && pwd)
@@ -20,5 +20,5 @@ docker_pull_cache jekyll/jekyll:pages
 
 cd /vagrant
 docker_compose_build_cache \
-  altus5/kickster:latest \
+  altus5/jekyll-boot:latest \
   altus5/jekyll_data:latest
