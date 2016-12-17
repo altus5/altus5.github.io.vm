@@ -73,14 +73,14 @@ docker exec -it jekyll-boot jekyll build
 CircleCI も、そのリポジトリで、連携してください。
 
 ## CircleCI の自動デプロイ
-~/jekyll/ にある circle.yml と bin/automated は、 CircleCI の設定と
+~/jekyll/ に作成される circle.yml と bin/automated は、 CircleCI の設定と
 自動デプロイのためのスクリプトです。  
-このスクリプトは、以下の git のブランチで構成されていることを期待します。  
+このスクリプトは、以下の git のブランチで構成されていることを前提とします。  
 
 | ブランチ | 説明 |
 |:-------:|------|
-| master  | ビルドされたコンテンツがコミットされたブランチ |
-| draft   | jekyllのテンプレート |
+| draft   | jekyllのテンプレート。このブランチでコーディングする。 |
+| master  | 変換された静的コンテンツがコミットされるブランチ。|
 
 draft ブランチで、 jekyll 用のリソース全般を管理し、 jekyll によって、
 変換されて、最終的にWEBページとして公開される静的ファイルは、 master ブランチです。  
@@ -158,7 +158,7 @@ Integrations の設定で、CircleCIの方でも、このリポジトリを選�
 |Allow write access| チェック （必須） |
    
 ### CircleCI への秘密キーの登録
-https://circleci.com/gh/アカウント/リポジトリ名/edit#ssh
+https://circleci.com/gh/アカウント/リポジトリ名/edit#ssh  
 「Add SSH Key」ボタンを押して、次のように登録する。 
 
 | 項目 |値|
@@ -167,8 +167,8 @@ https://circleci.com/gh/アカウント/リポジトリ名/edit#ssh
 |Private Key|ssh-keygenで作成した id_rsa.sample の内容を貼り付ける|
 
 ## 自動デプロイ
-以上の設定を行うと、 draft ブランチにプッシュする毎、CircleCI で jekyll が実行されて
-変換結果を master ブランチにデプロイされて、GitHub Pages で公開されているWEBサイトが
-自動的に更新されます。  
+以上の設定を行うと、 draft ブランチにプッシュする毎に、CircleCI で jekyll が実行されて
+生成された静的コンテンツが master ブランチにデプロイされます。  
+GitHub Pages で公開されているWEBサイトは、ダウンタイム無しで更新されます。  
 
 
