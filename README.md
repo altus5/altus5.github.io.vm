@@ -118,15 +118,13 @@ cd ~/jekyll
 git init
 git remote add origin ${ORIGIN_URL}
 # master ブランチをプッシュ
-echo "coming-soon" > README.txt
-git add README.txt
-git commit -m "first commit"
+git commit --allow-empty -m "first commit"
 git push origin master
 rm README.txt
 # draft ブランチをプッシュ
-git checkout -b draft
+git checkout --orphan draft
 git add -A
-git commit -m "first commit"
+git commit -m "first draft"
 git push origin draft
 ```
 

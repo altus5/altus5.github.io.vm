@@ -70,6 +70,8 @@ RUN \
   echo '/.jekyll-metadata' >> .gitignore && \
   # gulpを使うので、node_modules も exclude に追加
   sed -i -e 's|^\s*-\s*vendor|&\n  - node_modules|' _config.yml && \
+  sed -i -e 's|^\s*-\s*vendor|&\n  - package.json|' _config.yml && \
+  sed -i -e 's|^\s*-\s*vendor|&\n  - gulpfile.js|' _config.yml && \
   # gulpの実行を追加
   sed -i -e 's|jekyll build|&\ngulp|' bin/deploy
 USER root
