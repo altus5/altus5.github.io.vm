@@ -6,18 +6,11 @@ services:
     image: altus5/jekyll_boot:latest
     container_name: jekyll_boot
     working_dir: /srv/jekyll
+    privileged: true
     command: /srv/setup/start-jekyll.sh
     ports:
       - "4000:4000"
     volumes:
-      - /var/run/docker.sock:/var/run/docker.sock
       - ./jekyll:/srv/jekyll
       - ./setup:/srv/setup
-    volumes_from:
-      - datastore
-
-  datastore:
-    build: setup/containers/datastore
-    image: altus5/jekyll_data:latest
-    container_name: datastore
 

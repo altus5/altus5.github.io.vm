@@ -15,10 +15,8 @@ fi
 $basedir/install-docker-compose.sh
 
 # docker image をキャッシュするために、 docker-compose の前に pull しておく
-docker_pull_cache busybox:latest
 docker_pull_cache jekyll/jekyll:pages
 
 cd /vagrant
 docker_compose_build_cache \
-  altus5/jekyll_boot:latest \
-  altus5/jekyll_data:latest
+  altus5/jekyll_boot:latest 

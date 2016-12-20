@@ -1,5 +1,5 @@
 GitHub Pages 用 jekyll 実行環境
-==============================
+===============================
 
 GitHub Pages 用に、 [jekyll](http://jekyllrb.com/) の実行環境を作成します。  
 初回起動時には、 [kickster](http://kickster.nielsenramon.com/) を使って
@@ -63,8 +63,9 @@ docker-compose up
 ### 手動でビルドする
 --watch の反応が悪くて、まどろっこしい場合は、コンテナにアタッチして、
 手動で build もできます。  
+※jekyll ユーザーで実行します。  
 ```
-docker exec -it jekyll_boot jekyll build
+docker exec -it -u jekyll jekyll_boot jekyll build
 ```
 
 ## 用途
