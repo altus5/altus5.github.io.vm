@@ -17,23 +17,21 @@ Windows で vagrant を使う場合は、 次のとおり、vagrant-winnfsd を
 ```
 vagrant plugin install vagrant-winnfsd
 ```
-コンテナは、 jekyll を  $this_dir[^this_dir]/jekyll  ディレクトリの中で実行します。  
-jekyll で変換するリソースが既にある場合は、 $this_dir/jekyll  に配置してから、
+コンテナは、 jekyll を  ${project_root}/jekyll  ディレクトリの中で実行します。  
+jekyll で変換するリソースが既にある場合は、 ${project_root}/jekyll  に配置してから、
 起動してください。  
-これから、新規に作成する場合は、$this_dir/jekyll  ディレクトリは作成しないで、
+これから、新規に作成する場合は、${project_root}/jekyll  ディレクトリは作成しないで、
 そのまま、起動してください。  
-コンテナの初回起動時に、 $this_dir/jekyll のディレクトリを作成し、
+コンテナの初回起動時に、 ${project_root}/jekyll のディレクトリを作成し、
 [kickster](http://kickster.nielsenramon.com/) のテンプレートを展開します。  
 kickster のテンプレートは、手を加えていない素の状態だと、favicon だけ
  kickster のアイコンで、その他は、内容が空っぽの真っ白な表示です。
 オレンジ色のロケットのfaviconになっていれば、正常起動しています。  
 
-[^this_dir]: Vagrantfileのあるディレクトリ
-
 ## jekyll serve
 コンテナが起動すると、 jekyll serve が実行された状態になります。  
 vagrant で起動した場合は、ブラウザで、 http://192.168.98.10:4000 に
-アクセスすると、 $this_dir/jekyll にあるリソースが、表示されます。   
+アクセスすると、 ${project_root}/jekyll にあるリソースが、表示されます。   
 
 jekyll は、```--watch --incremental --force_polling``` オプションで
 起動しているので、リソースを編集すると、自動的に変換されます。  
@@ -59,24 +57,28 @@ cd /vagrant
 docker-compose down
 docker-compose up
 ```
+--watch の反応が悪くて、まどろっこしい場合も、停止して、再起動するのが、
+良いと思います。  
+そして、docker-compose up のあとの再停止は、 CTRL+C を2回打つと、kill されて、
+即終了してくれます。  
 
-### 手動でビルドする
---watch の反応が悪くて、まどろっこしい場合は、コンテナにアタッチして、
-手動で build もできます。  
-※jekyll ユーザーで実行します。  
+### コンテナへのアタッチ
+bower.json に追加した場合などは、 bower install としたいところですが、
+その場合は、コンテナにアタッチしてください。  
+jekyll ユーザーで bash でコンテナ内に入るのが、良いと思います。  
 ```
-docker exec -it -u jekyll jekyll_boot jekyll build
+docker exec -it -u jekyll jekyll_boot bash
 ```
 
 ## 用途
 このリポジトリは、あくまで、 jekyll が実行できる環境を作ることが目的です。  
-初回起動して、 $this_dir/jekyll  の中に、テンプレートが作成されたら、対象サイトのための
-リソースは、 $this_dir/jekyll の中で、 ```git init``` して、別のリポジトリで、
+初回起動して、 ${project_root}/jekyll  の中に、テンプレートが作成されたら、対象サイトのための
+リソースは、 ${project_root}/jekyll の中で、 ```git init``` して、別のリポジトリで、
 管理してください。  
 CircleCI も、そのリポジトリで、連携してください。
 
 ## CircleCI の自動デプロイ
-$this_dir/jekyll/ に作成される circle.yml と bin/automated は、 CircleCI の設定と
+${project_root}/jekyll/ に作成される circle.yml と bin/automated は、 CircleCI の設定と
 自動デプロイのためのスクリプトです。  
 このスクリプトは、以下の git のブランチで構成されていることを前提とします。  
 
@@ -90,7 +92,7 @@ draft ブランチで、 jekyll 用のリソース全般を管理し、 jekyll �
 2つのブランチで、それぞれ、異なるファイルを管理します。
 
 ## 最初にやること
-コンテナが起動して、 $this_dir/jekyll が作成されたあとは、まずは、次のことをやってください。  
+コンテナが起動して、 ${project_root}/jekyll が作成されたあとは、まずは、次のことをやってください。  
 
 * _config.yml  
 次の行を、正しいサイト名に変更する。  
@@ -115,7 +117,7 @@ USER_EMAIL: <your-github-email>
 ```
 
 * リポジトリにプッシュ  
-github にリポジトリを作成して、 $this_dir/jekyll をプッシュする。  
+github にリポジトリを作成して、 ${project_root}/jekyll をプッシュする。  
 draft ブランチは、 --orphan を付けて、 master とは、分離することを明示する。  
 ```
 cd jekyll
