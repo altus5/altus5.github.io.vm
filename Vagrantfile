@@ -31,7 +31,6 @@ Vagrant.configure(VAGRANTFILE_API_VERSION) do |config|
   config.vm.synced_folder ".", "/vagrant", id: "core", :nfs => true, :mount_options => ['nolock,vers=3,udp']
 
   config.vm.provider :virtualbox do |vb|
-    vb.name = "jekyll_boot"
     vb.customize ["modifyvm", :id, "--memory", 1024]
     # ホストOSでVPNで接続したときのゲストOS側のDNSをホストOSのものを使うようにする
     #vb.customize ["modifyvm", :id, "--natdnshostresolver1", "on"]

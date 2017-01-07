@@ -21,7 +21,7 @@
 FROM jekyll/jekyll:pages
 
 RUN \
-  apk --update add curl bash \
+  apk --update add curl bash rsync \
     build-base ruby-dev libxml2-dev libxslt-dev readline-dev libffi-dev \
     yaml-dev zlib-dev libxml2 zlib
 # pngquant のビルドに必要なモジュールを追加
