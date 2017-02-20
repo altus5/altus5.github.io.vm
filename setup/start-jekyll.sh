@@ -15,4 +15,4 @@ echo 'Build jekyll...'
 jekyll build
 
 echo 'Start jekyll serve'
-jekyll serve --watch --incremental --force_polling
+jekyll serve
