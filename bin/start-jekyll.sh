@@ -7,7 +7,7 @@
 
 basedir=$(cd $(dirname $0) && pwd)
 
-/srv/setup/init-jekyll.sh
+/srv/bin/init-jekyll.sh
 
 cd /srv/jekyll
 

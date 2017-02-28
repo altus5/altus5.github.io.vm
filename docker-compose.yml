@@ -2,15 +2,15 @@ version: '2'
 
 services:
   jekyll_boot:
-    build: setup/containers/jekyll_boot/
+    build: docker/jekyll_boot/
     image: altus5/jekyll_boot:latest
     container_name: jekyll_boot
     working_dir: /srv/jekyll
     privileged: true
-    command: /srv/setup/start-jekyll.sh
+    command: /srv/bin/start-jekyll.sh
     ports:
       - "4000:4000"
     volumes:
       - ./jekyll:/srv/jekyll
-      - ./setup:/srv/setup
+      - ./bin:/srv/bin
 

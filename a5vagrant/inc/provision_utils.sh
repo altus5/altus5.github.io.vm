@@ -3,34 +3,101 @@
 # プロビジョニングのユーティリティ
 # =========================
 
+_inc_dir=$(cd $(dirname $BASH_SOURCE) && pwd)
+
+if [ -e $_inc_dir/../setenv.sh ]; then
+  . $_inc_dir/../setenv.sh
+fi
+
 # ダウンロードファイルのキャッシュディレクトリ
-DOWNLOAD_CACHE_DIR=${DOWNLOAD_CACHE_DIR:-/vagrant/.local_cache/download}
+DOWNLOAD_CACHE_DIR=${DOWNLOAD_CACHE_DIR:-$_inc_dir/../../.local_cache/download}
 
 # docker imageのキャッシュディレクトリ
-DOCKER_CACHE_DIR=${DOCKER_CACHE_DIR:-/vagrant/.local_cache/docker}
+DOCKER_CACHE_DIR=${DOCKER_CACHE_DIR:-$_inc_dir/../../.local_cache/docker}
+
+WGET=$(builtin command -v wget)
+CURL=$(builtin command -v curl)
 
 ##
 # ファイルをダウンロードする。
 # 一度、ダウンロードしたファイルは、ローカルにキャッシュして、再利用する。
 # 
 # $1 ダウンロードURL
-# $2 キャッシュにエントリーするときのファイル名
-# $3 ダウンロードしたファイルを配置するパス
+# $2 ダウンロードしたファイルを配置するパス(指定が無いときはstdout)
 #
 download_cache() {
   url=$1
-  cache_entry_name=$2
-  dist_path=$3
+  dist_path=$2
+  cache_entry_name=`echo $url | sed -e 's/[^0-9a-zA-Z~\/\.-]/_/g'`
+  cache_entry_name=`echo $cache_entry_name | sed -e 's|//|/|g'`
+  cache_entry_name=`echo $cache_entry_name | sed -e 's|/$|/index.html|'`
   cache_path=$DOWNLOAD_CACHE_DIR/$cache_entry_name
-  mkdir -p $DOWNLOAD_CACHE_DIR
+  # ここでは、あまり賢いことをしていないので、
+  # すでにファイルが存在して、エラーがでるなどの場合、
+  # URLのパスを見直して、エラーが出ないようにしてください。
+  # 例えば、次のようなURLをキャッシュしようとすると、エラーになるので、
+  # URLを固定してください。
+  # http://www.yahoo.co.jp
+  # http://www.yahoo.co.jp/
+  mkdir -p $(dirname $cache_path)
   
   if [ ! -e $cache_path ]; then
-    echo "download $cache_path"
-    curl -Ss -L $url > $cache_path
+    echo "download $url > $cache_path">&2
+    $CURL -Ss -L $url > $cache_path
   else
-    echo "download $cache_entry_name (use cache)"
+    echo "download $url (cache hit)">&2
   fi
-  cp $cache_path $dist_path
+  if [ "" = "$dist_path" ]; then
+    cat $cache_path
+  else
+    cp $cache_path $dist_path
+  fi
+}
+
+wget() {
+  OPT=`getopt -o O:d -l output-document:,debug -- $*`
+  output_document=''
+  eval set -- $OPT
+  while [ -n "$1" ]; do
+    case $1 in
+      -O|--output-document) output_document=$2; shift 2;;
+      --) shift; break;;
+      *)
+        if [ $2 == -* ]; then
+          shift
+        fi
+        shift;;
+    esac
+  done
+  url=$1
+  if [ "" = "$output_document" ]; then
+    tmp=`echo $url | sed -e 's|/$|/index.html|'`
+    output_document=$(basename $tmp)
+  fi
+  download_cache $url $output_document
+}
+
+curl() {
+  OPT=`getopt -o OSsL -l remote-name,show-error,silent,location -- $*`
+  remote_name=0
+  output_document=''
+  eval set -- $OPT
+  while [ -n "$1" ]; do
+    case $1 in
+      -O|--remote-name) remote_name=1; shift;;
+      --) shift; break;;
+      *)
+        if [ $2 == -* ]; then
+          shift
+        fi
+        shift
+    esac
+  done
+  url=$1
+  if [ "1" = "$remote_name" ]; then
+    output_document=$(basename $url)
+  fi
+  download_cache $url $output_document
 }
 
 docker_cache_env() {
@@ -63,6 +130,9 @@ docker_pull_cache() {
 }
 
 docker_compose_build_cache() {
+  set -e
+  trap 'echo "ERROR $0" 1>&2' ERR
+
   args="$*"
   do_build=0
   for image_name in $args
@@ -98,12 +168,18 @@ docker_load_cache() {
 }
 
 docker_save_cache() {
-  docker_cache_env $*
+  docker_cache_env $1
+  digest=$2
+  digest_curr='no-digest'
 
-  if [ ! -e $_docker_cache_path ]; then
+  if [ -e ${_docker_cache_path}.sha ]; then
+    digest_curr=`cat ${_docker_cache_path}.sha`
+  fi
+  if [ "$digest" != "$digest_curr" ]; then
     mkdir -p $_docker_cache_dir
     echo "docker save $_docker_image_name > $_docker_cache_path"
     docker save $_docker_image_name > $_docker_cache_path
+    echo $digest > ${_docker_cache_path}.sha
   fi
 }
 

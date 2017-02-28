@@ -5,16 +5,16 @@
 #
 # 指定できるオプションは、次のとおり。
 #
-# -v バージョン(デフォルト=1.8.1)
+# -v バージョン(デフォルト=1.10.1)
 #
 # CoreOSでは/usr以下は読み込み専用ということで、/opt/binにインストールする
 #
 
 basedir=$(cd $(dirname $0) && pwd)
-source $basedir/provision_utils.sh
+. $basedir/../inc/provision_utils.sh
 
-install_dir=/usr/local/bin
-version=1.8.1
+install_dir=/usr/bin
+version=1.10.1
 
 usage_exit() {
   echo "Usage: $0 [-d version] " 1>&2
@@ -40,8 +40,8 @@ if [ ! -e $install_dir/docker-compose ]; then
   echo 'setup docker-compose ...'
   
   url=https://github.com/docker/compose/releases/download/$version/docker-compose-`uname -s`-`uname -m`
-  download_cache $url docker-compose $install_dir/docker-compose
+  curl -sS -L $url > $install_dir/docker-compose 
   chmod +x $install_dir/docker-compose
-  docker-compose -v
+  $install_dir/docker-compose -v
 fi
 
