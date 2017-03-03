@@ -21,7 +21,9 @@
 FROM jekyll/jekyll:pages
 
 RUN \
-  apk --update add curl bash rsync \
+  df -h
+RUN \
+  apk --update add wget bash rsync \
     build-base ruby-dev libxml2-dev libxslt-dev readline-dev libffi-dev \
     yaml-dev zlib-dev libxml2 zlib
 # pngquant のビルドに必要なモジュールを追加
@@ -30,12 +32,13 @@ RUN \
     libpng-dev file autoconf automake nasm
 
 RUN \
-  curl -fsSL https://github.com/stedolan/jq/releases/download/jq-1.5/jq-linux64 > /usr/local/bin/jq && \
+  wget -O /usr/local/bin/jq https://github.com/stedolan/jq/releases/download/jq-1.5/jq-linux64 && \
   chmod +x /usr/local/bin/jq
 
 RUN \
   gem install nokogiri && \
   gem install kickster && \
+  gem install ffi && \
   npm install -g bower
 
 # my_awesome_site で node install する
@@ -62,7 +65,7 @@ RUN \
 USER jekyll
 RUN \
   cd /srv/my_awesome_site && \
-  jekyll build
+  jekyll build --incremental
 # kicksterに加えてgulpを動かすための追加修正を行う
 RUN \
   cd /srv/my_awesome_site && \
@@ -73,9 +76,11 @@ RUN \
   sed -i -e 's|^\s*-\s*vendor|&\n  - package.json|' _config.yml && \
   sed -i -e 's|^\s*-\s*vendor|&\n  - gulpfile.js|' _config.yml && \
   # gulpの実行を追加
-  sed -i -e 's|jekyll build|&\ngulp|' bin/deploy
+  sed -i -e 's|jekyll build --incremental|&\ngulp imagemin|' bin/deploy
 USER root
 
 WORKDIR /srv/jekyll
 VOLUME  /srv
 EXPOSE 35729 4000
+
+CMD ["/srv/my_awesome_site/bin/start-jekyll-dev.sh"]

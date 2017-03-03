@@ -19,5 +19,7 @@ chown -R jekyll:jekyll node_modules .asset-cache
 if [ ! -e /srv/jekyll/bin/automated ]; then
   echo 'Setup jekyll...'
   rsync -avq /srv/my_awesome_site/ /srv/jekyll/ --exclude node_modules --exclude .asset-cache
+  su - jekyll -c 'cd /srv/jekyll && npm install'
 fi
 
+su - jekyll -c 'cd /srv/jekyll && $(npm bin)/gulp'

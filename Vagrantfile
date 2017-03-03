@@ -28,7 +28,7 @@ Vagrant.configure(VAGRANTFILE_API_VERSION) do |config|
     end
     config.proxy.http     = ENV['http_proxy']
     config.proxy.https    = ENV['https_proxy']
-    config.proxy.no_proxy = "localhost,127.0.0.1"
+    config.proxy.no_proxy = ENV['no_proxy']
   end
 
   # 初回のみ実行

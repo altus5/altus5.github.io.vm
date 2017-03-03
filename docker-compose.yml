@@ -7,10 +7,9 @@ services:
     container_name: jekyll_boot
     working_dir: /srv/jekyll
     privileged: true
-    command: /srv/bin/start-jekyll.sh
     ports:
       - "4000:4000"
+      - "35729:35729"
     volumes:
       - ./jekyll:/srv/jekyll
-      - ./bin:/srv/bin
 

@@ -16,10 +16,8 @@ trap 'echo "ERROR $0" 1>&2' ERR
 service network restart
 service docker restart
 
-cd /vagrant/
-# 最初に build を実行して、エラーがあるかどうかをターミナルにログ出力させる
-docker-compose run jekyll_boot /srv/bin/init-jekyll.sh
 # dockerコンテナ起動
+cd /vagrant/
 docker-compose up -d
 
 echo "SUCCESS - $0"
