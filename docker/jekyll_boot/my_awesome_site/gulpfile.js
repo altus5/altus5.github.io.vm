@@ -18,6 +18,7 @@ var paths = {
   jekyllSrc : [
     '**/*.html',
     '**/*.md',
+    '**/*.xml',
     '_assets/stylesheets/**/*.scss',
     '_assets/stylesheets/**/*.css',
     '_assets/javascripts/**/.js',
@@ -90,10 +91,10 @@ gulp.task('imagemin', function() {
 });
 
 // jekyll build, when a file is changed.
-gulp.task('watch', function () {
+gulp.task('watch', ['jekyll', 'imagemin', 'serve'], function () {
     gulp.watch(paths.jekyllSrc, {interval: 1000}, ['jekyll']);
     gulp.watch(paths.imageSrc, {interval: 1000}, ['imagemin']);
 })
 
-gulp.task('default', ['jekyll', 'imagemin', 'serve', 'watch']);
+gulp.task('default', ['jekyll', 'imagemin']);
 

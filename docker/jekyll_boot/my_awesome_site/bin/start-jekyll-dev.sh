@@ -22,4 +22,4 @@ if [ ! -e /srv/jekyll/bin/automated ]; then
   su - jekyll -c 'cd /srv/jekyll && npm install'
 fi
 
-su - jekyll -c 'cd /srv/jekyll && $(npm bin)/gulp'
+su - jekyll -c 'cd /srv/jekyll && $(npm bin)/gulp watch'

@@ -4,6 +4,7 @@ GitHub Pages 用 jekyll 実行環境
 GitHub Pages 用に、 [jekyll](http://jekyllrb.com/) の実行環境を作成します。  
 初回起動時には、 [kickster](http://kickster.nielsenramon.com/) を使って
 テンプレートをセットアップし、画像圧縮のために gulp imagemin も追加しています。  
+ビルドシステムは、 gulp を使っています。（gulp で jekyll build を実行している）
 
 テンプレートには、CircleCI用の設定ファイルも含まれているので、CircleCIに連携して、
 すぐに、自動デプロイを構成することもできます。  
@@ -11,12 +12,8 @@ GitHub Pages 用に、 [jekyll](http://jekyllrb.com/) の実行環境を作成�
 ## 起動方法
 環境は、vagrant で起動するか、docker-compose で起動してください。  
 vagrant で起動した場合は、その中で、docker-compose が実行されます。  
-動作確認は、Windows で vagrant を使って行われています。  
-Windows で vagrant を使う場合は、 次のとおり、vagrant-winnfsd を
-インストールしてください。  
-```
-vagrant plugin install vagrant-winnfsd
-```
+※動作確認は、Windows で vagrant を使って行われています。  
+
 コンテナは、 jekyll を  ${project_root}/jekyll  ディレクトリの中で実行します。  
 jekyll で変換するリソースが既にある場合は、 ${project_root}/jekyll  に配置してから、
 起動してください。  
@@ -28,39 +25,30 @@ kickster のテンプレートは、手を加えていない素の状態だと�
  kickster のアイコンで、その他は、内容が空っぽの真っ白な表示です。
 オレンジ色のロケットのfaviconになっていれば、正常起動しています。  
 
-## jekyll serve
-コンテナが起動すると、 jekyll serve が実行された状態になります。  
+## 自動ビルドとライブリロード
+コンテナが起動すると、 gulp watch でリソースが監視されて、自動ビルドされて、gulp-webserver によって、ライブリロードも行われます。 
 vagrant で起動した場合は、ブラウザで、 http://192.168.98.10:4000 に
-アクセスすると、 ${project_root}/jekyll にあるリソースが、表示されます。   
+アクセスすると、 ${project_root}/jekyll/_site にあるリソースが、表示されます。   
 
-リソースにエラーがあると、 jekyll serve がエラーで終了し、dockerのコンテナも終了します。  
-コンテナを jekyll serve で起動する前に、 jekyll build を実行して、エラーの有無が
-ターミナルに流れるようにしてあります。
-自動起動していない場合は、ターミナルに出力されたログを確認してください。  
+リソースにエラーがあると、 gulp watch でエラーが出力されて、ビルドされません。  
+しかし、ターミナルには、表示されないので、もし、表示が反映されない場合や、
+webサーバーが起動していない場合は、コンテナを、手動で、再起動してください。
 
-### jekyll serve 手動起動
-`jekyll serve` は、`--watch` オプションでは起動していないので、リソースを編集しても、自動的には変換されません。  
-リソースを編集したら、`jekyll build` を実行するか、あるいは、`jekyll serve`を`--watch`オプション付きで、起動し直してください。
-
-コンテナの再起動起動方法  
+コンテナの再起動方法  
 ```
 cd /vagrant
-docker-compose down
-docker-compose up
+sudo docker-compose down
+sudo docker-compose up
 ```
 
 ### コンテナ内での作業
-`jekyll build` を実行する場合は、jekyll ユーザーでコマンドを実行します。
+例えば、 bower.json に追加した場合など、コンテナ内で `bower install` としたいところです。
 ```
-docker exec -u jekyll jekyll_boot jekyll build --incremental
-```
-bower.json に追加した場合なども、コンテナ内で `bower install` としたいところです。
-```
-docker exec -u jekyll jekyll_boot bower install
+sudo docker exec -u jekyll jekyll_boot bower install
 ```
 あるいは、bash を起動して、アレコレ作業する場合は、こちらで。
 ```
-docker exec -it -u jekyll jekyll_boot bash
+sudo docker exec -it -u jekyll jekyll_boot bash
 ```
 
 ## 用途
